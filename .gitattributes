@@ -1,2 +1,2 @@
-# Ignorar contagem linguistica para o arquivo HTML extenso
-/html/** linguist-vendored
+# Ignorar contagem linguistica para o arquivo HTML extenso dentro de /dataAnalysis/
+/dataAnalysis/html/** linguist-vendored
