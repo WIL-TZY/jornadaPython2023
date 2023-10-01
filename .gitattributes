@@ -1,2 +1,2 @@
-# Ignorar arquivo grande HTML
-*.html
+# Ignorar contagem linguistica para o arquivo HTML extenso
+/html/** linguist-vendored
