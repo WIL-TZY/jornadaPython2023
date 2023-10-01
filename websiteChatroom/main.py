@@ -25,9 +25,12 @@ def main(pagina):
     # --------------------------------------- BACK END ---------------------------------------#
     # ETAPA 4: Quando entrar no chat, o usuário pode enviar e receber mensagens na intranet (BACK) 
     # A mensagem sinalizando que o usuário entrou no chat
-    def enviar_mensagem_tunel(mensagem):
+    def enviar_mensagem_tunel(mensagem): # ----> o parâmetro mensagem vai receber um dicionário
+        mensagem_texto = mensagem["texto"]
+        mensagem_usuario = mensagem["usuario"]
+
         # Adicionar a mensagem no chat p/ todos verem
-        chat.controls.append(ft.Text(mensagem))
+        chat.controls.append(ft.Text(f"{mensagem_usuario}: {mensagem_texto}"))
 
         pagina.update() # Recarrega a página (necessário para que mudanças ocorram na página)
 
@@ -35,21 +38,22 @@ def main(pagina):
     # Criar o túnel de conexão PUB-SUB (Publish & Subscribe)
     # subscribe() é responsável por transmitir essa mensagem a todos que estão conectados na intranet
     pagina.pubsub.subscribe(enviar_mensagem_tunel)
-
-    # Ocorre quando o botão "Enviar" é clicado
+    # -----------------------------------------------------------------------------------------#
+     
+    # Ocorre quando o botão "Enviar" é clicado (FRONT)
     def enviar_mensagem(evento):
-        # Envia para o túnel a mensagem que está armazenada no campo
-        pagina.pubsub.send_all(campo_mensagem.value)
+        # Envia para o túnel a mensagem que está armazenada no campo - criando um dicionário p/ mandar as duas informações
+        pagina.pubsub.send_all({"texto": campo_mensagem.value, "usuario": campo_usuario.value})
         # Limpar o campo de mensagem
         campo_mensagem.value = ""
         pagina.update() # Recarrega a página
-    # -----------------------------------------------------------------------------------------#
+
 
     botao_enviar = ft.ElevatedButton(text="Enviar", on_click=enviar_mensagem)
     
     # ETAPA 3: Criação do chat (FRONT)
     # O campo e o botão de enviar mensagem devem ser criados
-    def fechar_popup(evento):
+    def fechar_popup_entrar_chat(evento):
         # Fechar o Popup
         popup.open = False
         
@@ -72,11 +76,11 @@ def main(pagina):
         title=ft.Text("Bem vindo(a) ao chat"),                                  # A parte superior da caixa (acima do content)
         modal=True,     # Modal=True --> Não dá pra sair do popup clicando fora. Modal=False, é possível ignorar a janelinha clicando em outro ponto da página.
         content=campo_usuario,                                                  # O corpo da caixa
-        actions=[ft.ElevatedButton(text="Entrar", on_click=fechar_popup)],      # A parte inferior da caixa (abaixo do content)
+        actions=[ft.ElevatedButton(text="Entrar", on_click=fechar_popup_entrar_chat)],      # A parte inferior da caixa (abaixo do content)
         on_dismiss=lambda e: print("Chat inicializado")
     )
 
-    def entrar_chat(evento): # ---> "Event Handler" (similar ao JS)
+    def entrar_popup(evento): # ---> "Event Handler" (similar ao JS)
         # Chama o pop up
         pagina.dialog = popup
         popup.open = True
@@ -86,7 +90,7 @@ def main(pagina):
         pagina.update() # Recarrega a página
 
     # ETAPA 1: Botão "Iniciar Chat" (FRONT)
-    botao_iniciar = ft.ElevatedButton(text="Iniciar chat", on_click=entrar_chat)
+    botao_iniciar = ft.ElevatedButton(text="Iniciar chat", on_click=entrar_popup)
 
 
 
